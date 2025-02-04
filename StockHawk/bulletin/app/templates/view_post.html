@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center" data-aos="fade-up">
+        <div class="col-lg-10">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('bulletin.views.home') }}" class="text-decoration-none text-primary">
+                            Home
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active text-light">{{ post.folder.name }}</li>
+                </ol>
+            </nav>
+
+            <article class="card post-article">
+                <div class="card-body">
+                    <header class="article-header mb-5">
+                        <h1 class="article-title gradient-text mb-3">{{ post.title }}</h1>
+                        <div class="article-meta d-flex justify-content-between align-items-center">
+                            <span class="text-muted">
+                                {{ post.date_created.strftime('%B %d, %Y') }}
+                            </span>
+                            {% if post.tags %}
+                            <div class="article-tags">
+                                {% for tag in post.tags.split(',') %}
+                                <span class="badge tag-badge">{{ tag.strip() }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </header>
+
+                    <div class="article-content ck-content">
+                        {{ post.body|safe }}
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+<style>
+    .post-article {
+        background: rgba(51, 51, 51, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    .article-title {
+        font-size: 2.5rem;
+        line-height: 1.2;
+    }
+
+    .tag-badge {
+        background: rgba(0, 255, 136, 0.1) !important;
+        border: 1px solid rgba(0, 255, 136, 0.3);
+        color: var(--primary-color) !important;
+        font-weight: 500;
+        margin-left: 0.5rem;
+    }
+
+    .ck-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .ck-content h2, .ck-content h3 {
+        color: var(--primary-color);
+        margin-top: 2rem;
+    }
+
+    .ck-content img {
+        border-radius: 8px;
+        margin: 2rem 0;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .ck-content a {
+        color: var(--primary-color);
+        text-decoration: none;
+        border-bottom: 1px solid currentColor;
+    }
+
+    .ck-content a:hover {
+        color: #00ccff;
+    }
+
+    .breadcrumb {
+        background: rgba(51, 51, 51, 0.5);
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+    }
+
+    .gradient-text {
+        background: linear-gradient(45deg, var(--primary-color), #00ccff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+{% endblock %}

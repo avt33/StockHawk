@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Post{% endblock %}
+
+{% block content %}
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+<div class="container py-5">
+    <div class="row justify-content-center" data-aos="fade-up">
+        <div class="col-lg-10">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center mb-4 gradient-text">Create New Post</h2>
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control dark-input" name="title" id="title" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="tags" class="form-label">Tags</label>
+                            <input type="text" class="form-control dark-input" name="tags" id="tags" placeholder="#investing, #analysis">
+                            <small class="text-muted">Separate tags with commas</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="body" class="form-label">Content</label>
+                            <textarea class="form-control dark-input" name="body" id="body" rows="10"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="image" class="form-label">Upload Image</label>
+                            <input type="file" class="form-control dark-input" name="image" id="image" accept="image/*">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="folder" class="form-label">Folder</label>
+                            <select class="form-select dark-input" name="folder" id="folder" required>
+                                {% for folder in folders %}
+                                <option value="{{ folder.id }}">{{ folder.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-custom w-100">Submit Post</button>
+                        <button type="button" class="btn btn-secondary w-100 mt-2" onclick="uploadArticle()">Upload Article</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    class MyUploadAdapter {
+        constructor(loader) {
+            this.loader = loader;
+        }
+        upload() {
+            return this.loader.file.then(file => new Promise((resolve, reject) => {
+                const data = new FormData();
+                data.append('upload', file);
+
+                fetch('/upload-image', {
+                    method: 'POST',
+                    body: data
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.url) {
+                        resolve({ default: result.url });
+                    } else {
+                        reject(result.error || 'Upload failed');
+                    }
+                })
+                .catch(error => reject(error));
+            }));
+        }
+        abort() {}
+    }
+    
+    function MyCustomUploadAdapterPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return new MyUploadAdapter(loader);
+        };
+    }
+
+    ClassicEditor.create(document.querySelector('#body'), {
+        extraPlugins: [MyCustomUploadAdapterPlugin],
+        toolbar: [
+            'heading', '|', 'bold', 'italic', 'link', '|',
+            'bulletedList', 'numberedList', 'insertTable', '|',
+            'uploadImage', 'blockQuote', 'undo', 'redo'
+        ],
+        image: {
+            toolbar: [
+                'imageStyle:inline', 'imageStyle:wrapText', 'imageStyle:breakText', '|', 'imageTextAlternative'
+            ]
+        },
+        table: {
+            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+        }
+    }).catch(error => {
+        console.error('Editor initialization error:', error);
+    });
+
+    function uploadArticle() {
+        document.querySelector('form').submit();
+    }
+</script>
+
+<style>
+    .ck-editor__editable {
+        background: rgba(51, 51, 51, 0.5) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: var(--text-color) !important;
+        min-height: 400px;
+    }
+    .gradient-text {
+        background: linear-gradient(45deg, var(--primary-color), #00ccff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+{% endblock %}

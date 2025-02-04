@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StockHawk{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <style>
+        :root {
+            --primary-color: #00ff88;
+            --secondary-color: #1a1a1a;
+            --accent-color: #333;
+            --text-color: #ffffff;
+        }
+
+        body {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(26, 26, 26, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color), #00ccff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://source.unsplash.com/1600x900/?finance,stocks');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color), #00ccff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-custom {
+            background: linear-gradient(45deg, var(--primary-color), #00ccff);
+            color: var(--secondary-color);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+            color: var(--secondary-color);
+        }
+
+        .card {
+            background: rgba(51, 51, 51, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .card i {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color), #00ccff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .card p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .team-section {
+            padding: 5rem 0;
+            background: linear-gradient(180deg, var(--secondary-color), var(--accent-color));
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            border: 3px solid var(--primary-color);
+        }
+
+        .team-member h4 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        footer {
+            background: var(--accent-color);
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Add subtle animation for loading elements */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">StockHawk</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('portfolio.montecarlo.monte_carlo') }}">Monte Carlo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('portfolio.DCF.DCF') }}">DCF Analysis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('bulletin.auth.login') }}">Bulletin Board</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container text-center">
+            <h1 data-aos="fade-up">Navigate the Markets with Confidence</h1>
+            <p data-aos="fade-up" data-aos-delay="200">StockHawk provides powerful financial analysis tools and expert insights to help you make informed investment decisions.</p>
+            <a href="{{ url_for('portfolio.montecarlo.monte_carlo') }}" class="btn btn-custom" data-aos="fade-up" data-aos-delay="400">Get Started</a>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Monte Carlo Simulation</h3>
+                    <p>Run sophisticated simulations to estimate future stock prices and understand potential risks in your investment strategy.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card">
+                    <i class="fas fa-dollar-sign"></i>
+                    <h3>DCF Analysis</h3>
+                    <p>Determine the intrinsic value of stocks using our comprehensive discounted cash flow model with real-time data.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="card">
+                    <i class="fas fa-newspaper"></i>
+                    <h3>Bulletin Board</h3>
+                    <p>Access curated market insights, expert investment strategies, and in-depth stock analysis from industry professionals.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="team-section">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="fade-up">Meet the Team</h2>
+            <div class="row">
+                <div class="col-md-4" data-aos="fade-up">
+                    <div class="team-member">
+                        <h4>Tanay Munugala</h4>
+                        <p>Founder, Writer</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="team-member">
+                        <h4>Abhinav Vittalam</h4>
+                        <p>Founder, Developer</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="team-member">
+                        <h4>Kushal Kanaparthi</h4>
+                        <p>Developer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2025 StockHawk. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Navbar background change on scroll
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                document.querySelector('.navbar').style.padding = '0.5rem 0';
+            } else {
+                document.querySelector('.navbar').style.padding = '1rem 0';
+            }
+        });
+    </script>
+</body>
+</html>

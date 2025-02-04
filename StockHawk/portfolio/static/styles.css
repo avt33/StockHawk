@@ -1,0 +1,59 @@
+:root {
+    --primary-color: #00ff88;
+    --secondary-color: #1a1a1a;
+    --accent-color: #333;
+    --text-color: #ffffff;
+}
+
+body {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+}
+
+.hero-small {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://source.unsplash.com/1600x900/?finance,chart');
+    background-size: cover;
+    background-position: center;
+    padding: 4rem 0;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.glass-card {
+    background: rgba(51, 51, 51, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.custom-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.btn-custom {
+    background: linear-gradient(45deg, var(--primary-color), #00ccff);
+    color: var(--secondary-color);
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.detail-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 1.5rem;
+    height: 100%;
+}
+
+.overval { color: #ff4757; }
+.underval { color: #2ed573; }
+.equal_val { color: #ffa502; }

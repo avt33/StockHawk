@@ -1,0 +1,223 @@
+{% extends 'base_port.html' %}
+{% block title %}DCF Analysis{% endblock %}
+
+{% block nav_item1 %}DCF Analysis{% endblock %}
+{% block nav_item2 %}Free Cash Flows{% endblock %}
+{% block nav_item3 %}Weighted Average Cost of Capital (WACC){% endblock %}
+{% block nav_item4 %}Terminal Value{% endblock %}
+{% block nav_item5 %}Discounting{% endblock %}
+{% block nav_item6 %}Enterprise → Equity{% endblock %}
+
+{% block content %}
+<style>
+    .form-container {
+        background: rgba(51, 51, 51, 0.5);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-label {
+        color: var(--text-color);
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .form-control {
+        background: rgba(26, 26, 26, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-color);
+        padding: 1rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+    }
+
+    .submit-btn {
+        background: linear-gradient(45deg, var(--primary-color), #00ccff);
+        color: var(--secondary-color);
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+    }
+
+    .results-container {
+        background: rgba(51, 51, 51, 0.5);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    .price-display {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    .price-card {
+        background: rgba(26, 26, 26, 0.95);
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        flex: 1;
+        margin: 0 1rem;
+    }
+
+    .underval {
+        color: var(--primary-color);
+        font-weight: 700;
+    }
+
+    .overval {
+        color: #ff4466;
+        font-weight: 700;
+    }
+
+    .equal_val {
+        color: #ffaa00;
+        font-weight: 700;
+    }
+
+    .table {
+        width: 100%;
+        background: rgba(26, 26, 26, 0.95);
+        border-radius: 15px;
+        overflow: hidden;
+        margin-top: 2rem;
+    }
+
+    .thead-dark {
+        background: linear-gradient(45deg, var(--primary-color), #00ccff);
+    }
+
+    .thead-dark th {
+        color: var(--secondary-color);
+        font-weight: 600;
+        padding: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+        background: rgba(0, 255, 136, 0.1);
+    }
+
+    .table td, .table th {
+        padding: 1rem;
+        color: var(--text-color);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .alert-danger {
+        background: rgba(255, 68, 102, 0.2);
+        border: 1px solid rgba(255, 68, 102, 0.3);
+        color: #ff4466;
+        border-radius: 15px;
+        padding: 1rem;
+        margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .price-display {
+            flex-direction: column;
+        }
+
+        .price-card {
+            margin: 1rem 0;
+        }
+    }
+</style>
+
+<div class="fade-up">
+    <div class="form-container">
+        <form method="post">
+            <label for="ticker" class="form-label">Enter Stock Ticker:</label>
+            <input type="text" id="ticker" name="ticker" class="form-control" placeholder="E.G., DE" required>
+            <button class="submit-btn" onclick="this.closest('form').submit();">Calculate</button>
+        </form>
+    </div>
+
+    {% if results %}
+    <div class="results-container fade-up">
+        <div class="price-display">
+            {% set color_class_current = 'equal_val' %}
+            {% set color_class_intrinsic = 'equal_val' %}
+            {% if results.current_price < results.intrinsic_value %}
+                {% set color_class_current = 'overval' %}
+                {% set color_class_intrinsic = 'underval' %}
+            {% elif results.current_price > results.intrinsic_value %}
+                {% set color_class_current = 'underval' %}
+                {% set color_class_intrinsic = 'overval' %}
+            {% endif %}
+            
+            <div class="price-card">
+                <h4 class="{{ color_class_current }}">Current Price</h4>
+                <h2>${{ results.current_price }}</h2>
+            </div>
+            
+            <div class="price-card">
+                <h4 class="{{ color_class_intrinsic }}">Intrinsic Value</h4>
+                <h2>${{ results.intrinsic_value }}</h2>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key, value in results.extra_values.items() %}
+                <tr>
+                    <th>{{ key }}</th>
+                    <td>{{ value | round(2) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if error_message %}
+    <div class="alert alert-danger mt-3 fade-up">
+        {{ error_message }}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fadeElements = document.querySelectorAll('.fade-up');
+    fadeElements.forEach(element => {
+        element.classList.add('active');
+    });
+});
+</script>
+{% endblock %}
